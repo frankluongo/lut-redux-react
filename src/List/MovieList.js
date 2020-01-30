@@ -6,9 +6,10 @@ import { getMovies } from '../Utils/Actions';
 import MovieGrid from "./MovieGrid";
 import Movie from './Movie';
 
-const MovieList = ({ getMovies, isLoaded, movies }) => {
+const MovieList = ({ getMovies, isLoaded, movies, moviesLoadedAt }) => {
+  const oneHour = 60 * 60 * 1000;
   useEffect(() => {
-    if (!isLoaded) {
+    if (!isLoaded || isMoreThanOneHour()) {
       getMovies();
     }
   }, [getMovies, isLoaded])
@@ -22,11 +23,16 @@ const MovieList = ({ getMovies, isLoaded, movies }) => {
       {movies.map(movie => <Movie key={movie.id} movie={movie} />)}
     </MovieGrid>
   )
+
+  function isMoreThanOneHour() {
+    return ((new Date()) - new Date(moviesLoadedAt)) > oneHour;
+  }
 }
 
 const mapStateToProps = (state) => ({
   isLoaded: state.movies.moviesLoaded,
-  movies: state.movies.moviesList
+  movies: state.movies.moviesList,
+  moviesLoadedAt: state.movies.moviesLoadedAt
 })
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({ getMovies }, dispatch)

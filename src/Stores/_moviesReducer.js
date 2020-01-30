@@ -2,7 +2,8 @@ import { GET_MOVIES } from "../Utils/Actions"
 
 const initialState = {
   moviesList: [],
-  moviesLoaded: false
+  moviesLoaded: false,
+  moviesLoadedAt: null,
 }
 
 export default function (state = initialState, action) {
@@ -12,7 +13,8 @@ export default function (state = initialState, action) {
       return {
         ...state,
         moviesList: data,
-        moviesLoaded: true
+        moviesLoaded: true,
+        moviesLoadedAt: new Date(),
       };
     default:
       return state;
