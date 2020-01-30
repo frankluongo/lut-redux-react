@@ -1,24 +1,20 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
+import { bindActionCreators } from "redux"
+import { connect } from "react-redux";
+
+import { getMovie, resetMovie } from '../Utils/Actions';
 
 import { backdropBaseUrl, posterBaseUrl, singleMovieUrl } from "../API/moviedb"
 import MovieWrapper from './MovieWrapper'
 import MovieInfo from './MovieInfo'
 import Poster from '../Common/Poster'
-import updateStateWithData from '../Utils/updateStateWithData'
+import { getImagePath, getMovieId } from "./getters";
 
 const MovieDetail = (props) => {
-  const [movie, updateMovie] = useState({
-    backdrop_path: '',
-    overview: '',
-    poster_path: '',
-    release_date: '',
-    title: ''
-  })
+  const { getMovie, isLoaded, movie, resetMovie } = props;
   const url = singleMovieUrl(getMovieId(props));
 
-  useEffect(() => {
-    updateStateWithData(url, updateMovie)
-  }, [url]);
+  useEffect(handleMount, []);
 
   return (
     <MovieWrapper
@@ -37,18 +33,19 @@ const MovieDetail = (props) => {
     </MovieWrapper>
   )
 
-  function getImagePath(basePath, imagePath, dimensions) {
-    if (imagePath === '') {
-      return `https://source.unsplash.com/random/${dimensions}154x231`
-    } else {
-      return `${basePath}${imagePath}`;
+  function handleMount() {
+    if (!isLoaded) {
+      getMovie(url)
     }
-
-  }
-
-  function getMovieId(props) {
-    return props.match.params.id;
+    return resetMovie
   }
 }
 
-export default MovieDetail
+const mapStateToProps = (state) => ({
+  isLoaded: state.movie.movieLoaded,
+  movie: state.movie.data
+})
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({ getMovie, resetMovie }, dispatch)
+
+export default connect(mapStateToProps, mapDispatchToProps)(MovieDetail)

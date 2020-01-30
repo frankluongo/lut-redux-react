@@ -1,16 +1,21 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
+import { bindActionCreators } from "redux"
+import { connect } from "react-redux";
+import { getMovies } from '../Utils/Actions';
 
 import MovieGrid from "./MovieGrid";
 import Movie from './Movie';
-import { listUrl } from '../API/moviedb';
-import updateStateWithData from '../Utils/updateStateWithData';
 
-const MovieList = () => {
-  const [movies, updateMovies] = useState([]);
-
+const MovieList = ({ getMovies, isLoaded, movies }) => {
   useEffect(() => {
-    updateStateWithData(listUrl, updateMovies, 'results')
-  }, [])
+    if (!isLoaded) {
+      getMovies();
+    }
+  }, [getMovies, isLoaded])
+
+  if (!isLoaded) {
+    return <h1>Loading...</h1>
+  }
 
   return (
     <MovieGrid>
@@ -19,4 +24,11 @@ const MovieList = () => {
   )
 }
 
-export default MovieList
+const mapStateToProps = (state) => ({
+  isLoaded: state.movies.moviesLoaded,
+  movies: state.movies.moviesList
+})
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({ getMovies }, dispatch)
+
+export default connect(mapStateToProps, mapDispatchToProps)(MovieList)
