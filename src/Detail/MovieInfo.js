@@ -8,6 +8,8 @@ const MovieInfo = styled.div`
     margin-left: 20px;
   }
   img {
+    display: block;
+    height: auto;
     position: relative;
     top: -5rem;
   }

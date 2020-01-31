@@ -2,8 +2,13 @@ import styled from 'styled-components';
 
 const MovieWrapper = styled.div`
   position: relative;
+
+  align-items: center;
+  display: flex;
+  justify-content: center;
+
+  min-height: 100vh;
   padding: 1.5rem;
-  padding-top: 50vh;
   background: url(${props => props.backdrop}) no-repeat;
   background-size: cover;
 `;
